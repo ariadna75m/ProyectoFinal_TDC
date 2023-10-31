@@ -1,4 +1,3 @@
-
 ## Introducción
 
 La arquitectura del flujo de trabajo para la librería en línea se muestra en la Figura 1.1 y gira en torno a un motor de flujo de trabajo. Los componentes del flujo de trabajo tienen interfaces de aplicación que proporcionan medios estándar de comunicación entre estos componentes y el motor de flujo de trabajo. Todos los componentes del flujo de trabajo tienen funciones específicas que desempeñar en un flujo de trabajo.
@@ -32,7 +31,30 @@ Un Diagrama de máquina de estados está relacionado a los autómatas, ya que se
   
   ![image](https://github.com/ariadna75m/ProyectoFinal_TDC/assets/83561363/9ad803c9-9eb4-4b77-8e00-a2359527c003)
 
+- Compra de libros (usuraio)
 
+  ![image](https://github.com/ariadna75m/ProyectoFinal_TDC/assets/83561363/c211284b-deee-4872-a8ce-282c4198ed20)
+
+- Proceso de compra
+
+  ![image](https://github.com/ariadna75m/ProyectoFinal_TDC/assets/83561363/e033d1da-5fb3-4aa6-9daa-40b285473239)
+
+    - Este diagrama se interpreta con los siguientes pasos
+      - La Autorización de Tarjeta de Crédito no puede comenzar hasta que se inicie la Colocación del Pedido (T2 BD T1).
+      - El Pedido de Libros con el editor no puede comenzar hasta que se inicie la Colocación del Pedido (T3 BD T1).
+      - Si la Autorización de Tarjeta de Crédito se interrumpe, entonces el Pedido de Libros con el editor también debe interrumpirse (T2 AD T3).
+      - El Pedido de Libros con el editor no puede confirmar ni interrumpir hasta que la Autorización de Tarjeta de Crédito confirme o interrumpa (T3 TD T2).
+      - Enviar el Libro al Transportista no puede comenzar a ejecutarse hasta que el Pedido de Libros con el editor confirme o se interrumpa (T5 SD T3).
+      - Encontrar un Transportista no puede comenzar hasta que se inicie la Colocación del Pedido (T4 BD T1).
+      - Si la tarea de Encontrar un Transportista se interrumpe, entonces la tarea de Enviar el Libro al Transportista debe interrumpirse (T4 AD T5).
+      - Si tanto la tarea de Encontrar un Transportista como la tarea de Enviar el Libro al Transportista confirman, entonces la tarea de Encontrar un Transportista confirma primero (T4 CD T5).
+      - La Cancelación del Pedido de libros con el editor no puede comenzar a ejecutarse hasta que la tarea de Encontrar un Transportista se interrumpa (T4 BAD T6).
+      - Si la tarea de Encontrar un Transportista se interrumpe, entonces la tarea de Cancelación del Pedido de libros con el editor se confirma (T6 FCAD T4).
+      - La tarea de Enviar el Pedido no puede comenzar a ejecutarse hasta que la tarea de Enviar el Libro al Transportista confirme o se interrumpa (T7 SD T5).
+      - La tarea de Enviar el Pedido no puede comenzar a ejecutarse hasta que la tarea de Encontrar un Transportista confirme o se interrumpa (T7 SD T4).
+      - La tarea de Procesar el Pago no puede comenzar hasta que comience la tarea de Enviar el Pedido (T8 BD T7).
+      - Si la tarea de Procesar el Pago se interrumpe, entonces la tarea de Enviar el Pedido también debe interrumpirse (T8 AD T7).
+      - La tarea de Enviar el Pedido no puede confirmar ni interrumpir hasta que la tarea de Procesar el Pago confirme o interrumpa (T7 TD T8).
 
 ## Step 2: Do the next thing
 
