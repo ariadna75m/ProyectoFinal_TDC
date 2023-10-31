@@ -71,3 +71,52 @@ def prestar_o_reporte():
         return False
     else:
         return
+def reporte():
+    dato = input('Escriba \n'
+                 'Autor mas leido\n'
+                 'Libro mas prestado\n'
+                 'Dia mas frecuente\n'
+                 'Imprimir los libros prestados por autor\n'
+                 ' o cualquier cosa para salir:')
+    if dato.lower().startswith('a'):
+        autores = leer(ARCHIVO_PRESTAMOS)
+        datos = contar(autores, 0)
+        reporte = max(datos, key=datos.get)
+        print(f'El autor mas frecuente es {reporte}')
+    elif dato.lower().startswith('l'):
+        libros = leer(ARCHIVO_PRESTAMOS)
+        datos = contar(libros, 1)
+        reporte = max(datos, key=datos.get)
+        print(f'El libro mas frecuente es {reporte}')
+    elif dato.lower().startswith('d'):
+        dias = leer(ARCHIVO_PRESTAMOS)
+        datos = contar(dias, 2)
+        reporte = max(datos, key=datos.get)
+        print(f'El día mas frecuente es {reporte}')
+    elif dato.lower().startswith('i'):
+        prestamo = leer(ARCHIVO_PRESTAMOS)
+        autor = input('Escriba el autor que desear consultar')
+        datos = filtrar(prestamo, autor, 0)
+        libros = set(seleccionar_columna(datos,1))
+        print(f'{"Los libros" if len(libros) > 1 else "El libro"} del autor {autor} {"son" if len(libros) > 1 else "es"} {",".join(libros)}')
+    else:
+        return
+
+def generate_date():
+    return random.choices(pd.date_range('20000101', periods=5000), k=10)
+
+def generar_prestamos_auto():
+
+    autores = leer(ARCHIVO_AUTORES)
+    autores = seleccionar_columna(autores,0)
+
+    libros = leer(ARCHIVO_TITULOS)
+    libros = seleccionar_columna(libros,0)
+
+    mis_autores = random.choices(autores, k=10)
+    autores_index = [autores.index(i) for i in mis_autores]
+    mis_libros = [libros[i] for i in autores_index]
+    mis_dias = random.choices(DIAS, k=10)
+    mis_fechas = generate_date()
+    mis_fechas = [i.strftime("%Y-%m-%d") for i in mis_fechas]
+    agregar(ARCHIVO_PRESTAMOS, list(zip(mis_autores, mis_libros, mis_dias, mis_fechas)))
