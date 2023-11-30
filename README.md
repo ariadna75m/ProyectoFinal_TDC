@@ -64,6 +64,19 @@ En este momento, hay dos enfoques que una empresa puede adoptar. El primer enfoq
 
 El segundo enfoque consiste en aceptar la política actual de que la cancelación del pedido no puede ser forzada a ejecutarse. Esto podría resultar en pérdidas para la empresa. Con este enfoque, la dependencia FCAD entre las tareas Buscar Transportista y Cancelar Pedido no puede ser impuesta. El patrón de control y el reconocedor para el supervisor con este enfoque se muestra en la imagen.
 
+Primer Enfoque: Modificación de Términos de Acuerdo Comercial
+Situación:
+Desafío: La negativa del editor a cancelar un pedido es inaceptable para la empresa.
+Solución Propuesta: Modificar los términos del acuerdo comercial para permitir a la empresa cancelar pedidos con el editor en cualquier momento.
+Implicaciones:
+La librería en línea puede forzar la cancelación del pedido en cualquier momento durante la transacción.
+Estructura de Tarea Actual vs. Estructura Sugerida:
+Estructura Actual: La tarea de "Cancelar Pedido" tiene un evento de aborto incontrolable que podría interrumpir la tarea durante su ejecución.
+Estructura Sugerida: Se propone una nueva estructura de tarea sin un evento de aborto incontrolable, lo que significa que no hay eventos imprevistos que puedan interrumpir la tarea de cancelar el pedido.
+
+El primer autómata representa la estructura actual de tareas para la cancelación de un pedido. Tiene tres estados: "Buscar Transportista", "Cancelar Pedido" y "Pedido Cancelado". El autómata muestra que la tarea de "Buscar Transportista" debe completarse antes de que se pueda realizar la tarea de "Cancelar Pedido". Una vez que se completa la tarea de "Cancelar Pedido", el estado cambia a "Pedido Cancelado".
+
+El segundo autómata muestra la estructura de tarea sugerida para la cancelación del pedido. También tiene tres estados: "Buscar Transportista", "Cancelar Pedido" y "Pedido Cancelado". Sin embargo, en este caso, no se impone una dependencia entre las tareas "Buscar Transportista" y "Cancelar Pedido". Esto significa que la tarea de "Cancelar Pedido" puede llevarse a cabo sin necesidad de completar la tarea de "Buscar Transportista". El estado cambia a "Pedido Cancelado" una vez que se completa la tarea de "Cancelar Pedido".
 
 ## Next steps
 
