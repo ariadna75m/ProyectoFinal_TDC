@@ -56,11 +56,14 @@ Un Diagrama de máquina de estados está relacionado a los autómatas, ya que se
       - Si la tarea de Procesar el Pago se interrumpe, entonces la tarea de Enviar el Pedido también debe interrumpirse (T8 AD T7).
       - La tarea de Enviar el Pedido no puede confirmar ni interrumpir hasta que la tarea de Procesar el Pago confirme o interrumpa (T7 TD T8).
 
-## Step 2: Do the next thing
+## Problema identificado
 
-{% comment %} 
-Rinse and repeat, adding steps and tasks until the tutorial is complete 
-{% endcomment %}
+En este momento, hay dos enfoques que una empresa puede adoptar. El primer enfoque es que si la negativa del editor de cancelar el pedido es inaceptable, los términos del acuerdo comercial entre las dos partes involucradas deben modificarse. En este caso, significa que la librería en línea puede cancelar el pedido con el editor en cualquier momento de la transacción, es decir, la librería puede forzar que la tarea de Cancelar Pedido se lleve a cabo. Esto implica adoptar una estructura de tarea diferente. Esta estructura de tarea no tendrá un evento de aborto incontrolable que pueda interrumpir la tarea de cancelar el pedido durante su ejecución. La estructura actual y la estructura de tarea sugerida para Cancelar Pedido se muestran 
+
+![image](https://github.com/ariadna75m/ProyectoFinal_TDC/assets/83561363/4486eaf6-c464-40e0-92f6-9d5941b93bf9)
+
+El segundo enfoque consiste en aceptar la política actual de que la cancelación del pedido no puede ser forzada a ejecutarse. Esto podría resultar en pérdidas para la empresa. Con este enfoque, la dependencia FCAD entre las tareas Buscar Transportista y Cancelar Pedido no puede ser impuesta. El patrón de control y el reconocedor para el supervisor con este enfoque se muestra en la imagen.
+
 
 ## Next steps
 
