@@ -78,8 +78,6 @@ El primer autómata representa la estructura actual de tareas para la cancelaci�
 
 El segundo autómata muestra la estructura de tarea sugerida para la cancelación del pedido. También tiene tres estados: "Buscar Transportista", "Cancelar Pedido" y "Pedido Cancelado". Sin embargo, en este caso, no se impone una dependencia entre las tareas "Buscar Transportista" y "Cancelar Pedido". Esto significa que la tarea de "Cancelar Pedido" puede llevarse a cabo sin necesidad de completar la tarea de "Buscar Transportista". El estado cambia a "Pedido Cancelado" una vez que se completa la tarea de "Cancelar Pedido".
 
-## Next steps
+## Referencias
+Nos guiamos de este proyecto de github, hicimos los cambios necesarios para que funcione todo perfectamente, habia algunas cosas desactualizadas, https://github.com/Nitin-0205/Library-Management-System.
 
-{% comment %} 
-Provide a quick recap of what has been accomplished in the quick start as a means of transitioning to next steps. Include 2-3 actionable next steps that the user take after completing the quickstart. Always link to conceptual content on the feature or product. You can also link off to other related information on docs.github.com or in GitHub Skills. 
-{% endcomment %}
