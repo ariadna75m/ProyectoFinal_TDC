@@ -17,7 +17,7 @@ root = Tk()
 root.geometry("1000x562+200+80")
 root.resizable(False, False)
 root.title("Library Management System")
-root.iconbitmap('Library_Management_Sys/LibraryIcon.ico')
+root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
 
 bg = PhotoImage(file = "Library_Management_Sys/loginBg1.png")
 bg = bg.subsample(1,1)
@@ -415,7 +415,7 @@ def openTop():
     dashwin = Toplevel()
     dashwin.geometry("900x550+300+100")
     # dashwin.resizable(False, False)
-    dashwin.iconbitmap('LibraryIcon.ico')
+    dashwin.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
     dashwin.title("Library Management System")
 
     ## TopLevel Frame Title
