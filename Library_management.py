@@ -20,18 +20,6 @@ root = Tk()
 root.geometry("1000x562+200+80")
 root.resizable(False, False)
 root.title("Library Management System")
-#root.iconbitmap(r'C:/Users/Claudia Rejas/source/repos/Library-Management-System/Library_Management_Sys/LibraryIcon.ico')
-#root.iconpath = ImageTk.PhotoImage(file=os.path.join("Library_Management_Sys","LibraryIcon.ico"))
-#root.wm_iconbitmap()
-#root.iconphoto(False, root.iconpath)
-
-#root.iconphoto(False, Tk.PhotoImage(file='User.png'))
-#root.mainloop()
-
-#image = PIL.Image.open(r"C:\Users\Claudia Rejas\source\repos\Library-Management-System\Library_Management_Sys\IDbook.png")
-#img = ImageTk.PhotoImage(image)
-#l = Label(image=img)
-#l.pack()
 
 root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
 bg = PhotoImage(file = "Library_Management_Sys/loginBg1.png")
@@ -430,7 +418,7 @@ def openTop():
     dashwin = Toplevel()
     dashwin.geometry("900x550+300+100")
     # dashwin.resizable(False, False)
-    #dashwin.iconbitmap('LibraryIcon.ico')
+
     dashwin.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
     dashwin.title("Library Management System")
 
@@ -1830,4 +1818,3 @@ def openTop():
     dashboardframe.tkraise()
 
 root.mainloop()
-
