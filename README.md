@@ -56,14 +56,28 @@ Un Diagrama de máquina de estados está relacionado a los autómatas, ya que se
       - Si la tarea de Procesar el Pago se interrumpe, entonces la tarea de Enviar el Pedido también debe interrumpirse (T8 AD T7).
       - La tarea de Enviar el Pedido no puede confirmar ni interrumpir hasta que la tarea de Procesar el Pago confirme o interrumpa (T7 TD T8).
 
-## Step 2: Do the next thing
+## Problema identificado
 
-{% comment %} 
-Rinse and repeat, adding steps and tasks until the tutorial is complete 
-{% endcomment %}
+En este momento, hay dos enfoques que una empresa puede adoptar. El primer enfoque es que si la negativa del editor de cancelar el pedido es inaceptable, los términos del acuerdo comercial entre las dos partes involucradas deben modificarse. En este caso, significa que la librería en línea puede cancelar el pedido con el editor en cualquier momento de la transacción, es decir, la librería puede forzar que la tarea de Cancelar Pedido se lleve a cabo. Esto implica adoptar una estructura de tarea diferente. Esta estructura de tarea no tendrá un evento de aborto incontrolable que pueda interrumpir la tarea de cancelar el pedido durante su ejecución. La estructura actual y la estructura de tarea sugerida para Cancelar Pedido se muestran 
 
-## Next steps
+![image](https://github.com/ariadna75m/ProyectoFinal_TDC/assets/83561363/4486eaf6-c464-40e0-92f6-9d5941b93bf9)
 
-{% comment %} 
-Provide a quick recap of what has been accomplished in the quick start as a means of transitioning to next steps. Include 2-3 actionable next steps that the user take after completing the quickstart. Always link to conceptual content on the feature or product. You can also link off to other related information on docs.github.com or in GitHub Skills. 
-{% endcomment %}
+El segundo enfoque consiste en aceptar la política actual de que la cancelación del pedido no puede ser forzada a ejecutarse. Esto podría resultar en pérdidas para la empresa. Con este enfoque, la dependencia FCAD entre las tareas Buscar Transportista y Cancelar Pedido no puede ser impuesta. El patrón de control y el reconocedor para el supervisor con este enfoque se muestra en la imagen.
+
+Primer Enfoque: Modificación de Términos de Acuerdo Comercial
+Situación:
+Desafío: La negativa del editor a cancelar un pedido es inaceptable para la empresa.
+Solución Propuesta: Modificar los términos del acuerdo comercial para permitir a la empresa cancelar pedidos con el editor en cualquier momento.
+Implicaciones:
+La librería en línea puede forzar la cancelación del pedido en cualquier momento durante la transacción.
+Estructura de Tarea Actual vs. Estructura Sugerida:
+Estructura Actual: La tarea de "Cancelar Pedido" tiene un evento de aborto incontrolable que podría interrumpir la tarea durante su ejecución.
+Estructura Sugerida: Se propone una nueva estructura de tarea sin un evento de aborto incontrolable, lo que significa que no hay eventos imprevistos que puedan interrumpir la tarea de cancelar el pedido.
+
+El primer autómata representa la estructura actual de tareas para la cancelación de un pedido. Tiene tres estados: "Buscar Transportista", "Cancelar Pedido" y "Pedido Cancelado". El autómata muestra que la tarea de "Buscar Transportista" debe completarse antes de que se pueda realizar la tarea de "Cancelar Pedido". Una vez que se completa la tarea de "Cancelar Pedido", el estado cambia a "Pedido Cancelado".
+
+El segundo autómata muestra la estructura de tarea sugerida para la cancelación del pedido. También tiene tres estados: "Buscar Transportista", "Cancelar Pedido" y "Pedido Cancelado". Sin embargo, en este caso, no se impone una dependencia entre las tareas "Buscar Transportista" y "Cancelar Pedido". Esto significa que la tarea de "Cancelar Pedido" puede llevarse a cabo sin necesidad de completar la tarea de "Buscar Transportista". El estado cambia a "Pedido Cancelado" una vez que se completa la tarea de "Cancelar Pedido".
+
+## Referencias
+Nos guiamos de este proyecto de github, hicimos los cambios necesarios para que funcione todo perfectamente, habia algunas cosas desactualizadas, https://github.com/Nitin-0205/Library-Management-System.
+
