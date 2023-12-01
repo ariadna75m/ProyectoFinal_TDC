@@ -1,12 +1,15 @@
 import smtplib
 import traceback
-
+import os
+from PIL import ImageTk
+import PIL
 from tkcalendar import *
 from tkinter import *
 from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter.ttk import Treeview
 from tkinter import ttk
+import tkinter as tk
 import random
 import pyodbc
 import time
@@ -17,8 +20,20 @@ root = Tk()
 root.geometry("1000x562+200+80")
 root.resizable(False, False)
 root.title("Library Management System")
-root.iconbitmap('Library_Management_Sys/LibraryIcon.ico')
+#root.iconbitmap(r'C:/Users/Claudia Rejas/source/repos/Library-Management-System/Library_Management_Sys/LibraryIcon.ico')
+#root.iconpath = ImageTk.PhotoImage(file=os.path.join("Library_Management_Sys","LibraryIcon.ico"))
+#root.wm_iconbitmap()
+#root.iconphoto(False, root.iconpath)
 
+#root.iconphoto(False, Tk.PhotoImage(file='User.png'))
+#root.mainloop()
+
+#image = PIL.Image.open(r"C:\Users\Claudia Rejas\source\repos\Library-Management-System\Library_Management_Sys\IDbook.png")
+#img = ImageTk.PhotoImage(image)
+#l = Label(image=img)
+#l.pack()
+
+root.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
 bg = PhotoImage(file = "Library_Management_Sys/loginBg1.png")
 bg = bg.subsample(1,1)
 
@@ -137,9 +152,6 @@ stdcollegeimg = PhotoImage(file = 'Library_Management_Sys/StdClgImg.png')
 stdcollegeimg = stdcollegeimg.subsample(1,1)
 
 
-#Images Used inside Login Page
-
-
 
 #Widget Used inside the login Frame
 
@@ -149,20 +161,25 @@ def loginbtnfunc():
     user = username.get()
     passw = password.get()
 
-    if user == "" or passw == "":
-        messagebox.showinfo("Notification", "All fields are required", parent=root)
-    elif len(passw) < 1:
-        messagebox.showerror("Notification", "Password Must be of 8 Characters!!!", parent=root)
+    #if user == "" or passw == "":
+     #   messagebox.showinfo("Notification", "All fields are required", parent=root)
+    #elif len(passw) < 1:
+     #   messagebox.showerror("Notification", "Password Must be of 8 Characters!!!", parent=root)
+    if not user or not passw:
+        messagebox.showerror("Error", "Username o Contraseña incorrecta")
+        return
     else:
         try:
             # Establecer la conexión con la base de datos SQL Server
             con = pyodbc.connect('DRIVER={SQL Server};'
                                 'SERVER=CLAUDIA\SQLS;'
-                                'DATABASE=libreria;'
+                                'DATABASE=libreria1;'
                                 'UID=sa;'
                                 'PWD=pollo')
 
             mycursor = con.cursor()
+            query = 'use libreria1;'
+            mycursor.execute(query)
 
             # Consulta SQL para verificar las credenciales del administrador
             query = 'SELECT * FROM admin_logindata WHERE username=? AND password=?;'
@@ -172,20 +189,18 @@ def loginbtnfunc():
                 root.withdraw()
 
                 # Consulta SQL para obtener el nombre del administrador
-                query_name = 'SELECT name FROM admin_logindata WHERE username=?;'
-                data = mycursor.execute(query_name, (user,)).fetchone()
-
-                if data:
-                    Admin_name = data[0]
-
+                query_name = "SELECT name FROM admin_logindata WHERE username=?;"
+                data = mycursor.execute(query_name, (user,)).fetchall()
+                for i in data:
+                    Admin_name = i[0]
                 openTop()
             else:
-                messagebox.showerror('Notification', 'Incorrect Username or Password!!!\nPlease try again...',
+                messagebox.showerror('Notification', 'Usuario y contrasena incorrecto!!!\nVuelve a intentar...',
                                      parent=root)
                 loginForgetPassbtn.place(x=500, y=455)
 
         except Exception as e:
-            messagebox.showerror('Notification', f'Something is wrong!!!\nError: {str(e)}', parent=root)
+            messagebox.showerror('Notification', f'Error!!!\nError: {str(e)}', parent=root)
         finally:
             con.close()
 
@@ -252,12 +267,12 @@ def ForGetPass(event):
 
     def SendMail():
         if Emailval.get() == '' :
-            messagebox.showerror('Error',"Email Field Cannot be Empty  !!!",parent = for_frame )
+            messagebox.showerror('Error',"Email no puede estar vacio  !!!",parent = for_frame )
         else:
             try:
                 conn = pyodbc.connect('DRIVER={SQL Server};'
                                 'SERVER=CLAUDIA\SQLS;'
-                                'DATABASE=libreria;'
+                                'DATABASE=libreria1;'
                                 'UID=sa;'
                                 'PWD=pollo')
                 cursor = conn.cursor()
@@ -415,7 +430,8 @@ def openTop():
     dashwin = Toplevel()
     dashwin.geometry("900x550+300+100")
     # dashwin.resizable(False, False)
-    dashwin.iconbitmap('LibraryIcon.ico')
+    #dashwin.iconbitmap('LibraryIcon.ico')
+    dashwin.tk.call("wm", "iconphoto", root._w, tk.PhotoImage(file="Library_Management_Sys/IDbook.png"))
     dashwin.title("Library Management System")
 
     ## TopLevel Frame Title
@@ -474,6 +490,8 @@ def openTop():
 
     idLabelImg = Label(miniaddbookframe, image=Idimg, font=("Arial", 12, "bold"), bg='#D1DEE4')
     idLabelImg.place(x=70, y=65)
+    
+    bookidval = StringVar()
 
     idval = StringVar()
     idLabel = Label(miniaddbookframe, text="Book ID :", font=("Arial", 12, "bold"), bg='#D1DEE4')
@@ -525,28 +543,66 @@ def openTop():
                        width=10)
     priceEntry.place(x=190, y=270)
 
+    #def addbooksubmitbtnfunc():
+    #    if (
+    #            idval.get() == "" or titleval.get() == "" or authorval.get() == "" or editionval.get() == "" or priceval.get() == ""):
+    #        messagebox.showinfo("Info", "All Fields are required...", parent=dashwin)
+    #    else:
+    #        query = "Select bookid,title,author,edition,price from storebook where bookid=%s"
+    #        r = mycursor.execute(query, (idval.get()))
+    #        if (r == True):
+    #            messagebox.showinfo("Info", "Book ID already exists!!!", parent=dashwin)
+    #        else:
+    #            query = "insert into storebook(bookid,title,author,edition,price) values(%s,%s,%s,%s,%s);"
+    #            r = mycursor.execute(query,
+    #                                 (idval.get(), titleval.get(), authorval.get(), editionval.get(), priceval.get()))
+    #            if (r == True):
+    #               messagebox.showinfo("Notification", "Book Added Successfully...", parent=dashwin)
+    #            con.commit()
+    #            idval.set("")
+    #            titleval.set("")
+    #            authorval.set("")
+    #            editionval.set("")
+    #            priceval.set("")
     def addbooksubmitbtnfunc():
         if (
-                idval.get() == "" or titleval.get() == "" or authorval.get() == "" or editionval.get() == "" or priceval.get() == ""):
+            idval.get() == "" or titleval.get() == "" or authorval.get() == "" or editionval.get() == "" or priceval.get() == ""):
             messagebox.showinfo("Info", "All Fields are required...", parent=dashwin)
         else:
-            query = "Select bookid,title,author,edition,price from storebook where bookid=%s"
-            r = mycursor.execute(query, (idval.get()))
-            if (r == True):
+            # Abrir la conexión a la base de datos
+            con = pyodbc.connect('DRIVER={SQL Server};'
+                                'SERVER=CLAUDIA\SQLS;'
+                                'DATABASE=libreria1;'
+                                'UID=sa;'
+                                'PWD=pollo')
+            # Crear un nuevo cursor
+            cursor = con.cursor()
+
+            query_select = "SELECT bookid,title,author,edition,price FROM storebook WHERE bookid=?"
+            r = cursor.execute(query_select, (idval.get(),)).fetchone()
+
+            if r:
                 messagebox.showinfo("Info", "Book ID already exists!!!", parent=dashwin)
             else:
-                query = "insert into storebook(bookid,title,author,edition,price) values(%s,%s,%s,%s,%s);"
-                r = mycursor.execute(query,
-                                     (idval.get(), titleval.get(), authorval.get(), editionval.get(), priceval.get()))
-                if (r == True):
+                query_insert = "INSERT INTO storebook (bookid, title, author, edition, price) VALUES (?, ?, ?, ?, ?);"
+                cursor.execute(query_insert, (bookidval.get(), titleval.get(), authorval.get(), editionval.get(), priceval.get()))
+
+                if r:
                     messagebox.showinfo("Notification", "Book Added Successfully...", parent=dashwin)
-                con.commit()
+                    con.commit()
+
+                # Cerrar la conexión y el cursor
+                cursor.close()
+                con.close()
+
+                # Limpiar los campos después de la inserción exitosa
+                bookidval.set("")
                 idval.set("")
                 titleval.set("")
                 authorval.set("")
                 editionval.set("")
                 priceval.set("")
-
+                
     def addbookResetbtnfunc():
         idval.set("")
         titleval.set("")
@@ -629,18 +685,31 @@ def openTop():
                            relief=GROOVE, width=20 ,state = 'normal')
     studentidEntry.place(x=160, y=90)
 
+    import pyodbc
+
+    def create_connection():
+        server = 'CLAUDIA\SQLS'
+        database = 'libreria1'
+        username = 'sa'
+        password = 'pollo'
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+        return cnxn
+
     def issuebooksubmitbtnfunc1():
+        cnxn = create_connection()
+        cursor = cnxn.cursor()
+
         if studentidval == "":
-            messagebox.showinfo("Information" ,"Student Id cannot Be Empty  !!!",parent = dashwin)
+            messagebox.showinfo("Information" ,"Student Id cannot Be Empty !!!",parent = dashwin)
         else:
-            query = 'SELECT * FROM student_data WHERE roll_no=%s;'
-            result = mycursor.execute(query,(studentidval.get()))
-            if result == True:
+            query = 'SELECT * FROM student_data WHERE roll_no=?;'
+            result = cursor.execute(query,(studentidval.get()))
+            if result:
                 for child in issuebookminiframe3.winfo_children():
                     child.configure(state='normal')
-                query = "SELECT * FROM student_data WHERE roll_no=%s;"
-                r = mycursor.execute(query, (studentidval.get()))
-                data = mycursor.fetchall()
+                query = "SELECT * FROM student_data WHERE roll_no=?;"
+                r = cursor.execute(query, (studentidval.get()))
+                data = cursor.fetchall()
                 for i in data:
                     stdnameLabelVal.configure(text = i[1])
                     stdcourseLabelVal.configure(text = i[2])
@@ -735,7 +804,7 @@ def openTop():
         if (Bookidval.get() == ""):
             messagebox.showerror("Error", "Book Id is required!!!", parent=dashwin)
         else:
-            query = "select issue_status from storebook where bookid=%s;"
+            query = "select issue_status from storebook where bookid=?;"
             r = mycursor.execute(query, (Bookidval.get()))
             if r == True:
                 data = mycursor.fetchall()
@@ -743,7 +812,7 @@ def openTop():
                     if i[0] == "Issued":
                         messagebox.showinfo("Info", "This book already issued\nTry another one...!!!", parent=dashwin)
                     else:
-                        query = "select title,author,edition from storebook where issued_to=%s"
+                        query = "select title,author,edition from storebook where issued_to=?"
                         mycursor.execute(query,studentidval.get())
                         data = mycursor.fetchall()
                         case = True
@@ -785,7 +854,7 @@ def openTop():
                                 case = False
 
 
-                        query = "select title,author,edition from storebook where bookid=%s"
+                        query = "select title,author,edition from storebook where bookid=?"
                         mycursor.execute(query, (Bookidval.get()))
                         data = mycursor.fetchall()
                         for i in data:
@@ -925,10 +994,10 @@ def openTop():
                                     messagebox.showinfo("Info", "Confirm last date!!!", parent=dashwin)
                                 else:
                                     from_date = time.strftime("%y-%m-%d")
-                                    query = "insert into bookissued_data(roll_no,from_date,to_date,bookid) values(%s,%s,%s,%s);"
+                                    query = "insert into bookissued_data(roll_no,from_date,to_date,bookid) values(?,?,?,?);"
                                     r = mycursor.execute(query, (
                                         studentidval.get(), from_date, to_dateval.get(), Bookidval.get()))
-                                    query = "update storebook set issue_status=%s,issued_to=%s where bookid=%s;"
+                                    query = "update storebook set issue_status=%s,issued_to=%s where bookid=?;"
                                     mycursor.execute(query, ("Issued", studentidval.get(), Bookidval.get()))
                                     messagebox.showinfo("Notification","Book Issued Successfully...",
                                                         parent=issuebooksroot)
@@ -971,7 +1040,32 @@ def openTop():
             else:
                 messagebox.showinfo("INFORMATION", "No Book Available with Such ID", parent=dashwin)
                 Bookidval.set('')
+    def cancel_allocation():
+        bookid = entrybookid.get()
+        studentid = entrystudentid.get()
 
+        query = "select * from bookissued_data where bookid = ? and roll_no = ?;"
+        r = mycursor.execute(query, (bookid, studentid))
+        result = r.fetchall()
+
+        if result:
+            # If book is not already returned
+            if result[0][3] is None:
+                query = "update storebook set issue_status=?,issued_to=? where bookid=?;"
+                mycursor.execute(query, ("Available", None, bookid))
+
+                query = "delete from bookissued_data where bookid = ? and roll_no = ?;"
+                mycursor.execute(query, (bookid, studentid))
+
+                messagebox.showinfo("SUCCESS", "Book Allocation Cancelled Successfully...", parent=dashwin)
+            else:
+                messagebox.showinfo("ERROR", "Book Allocation Cancelled, But Book is Returned...", parent=dashwin)
+        else:
+            messagebox.showinfo("ERROR", "Book Allocation Not Found...", parent=dashwin)
+
+    cancel_allocation_btn = Button(dashwin, text="Cancel Allocation", font=("Times", 10, 'bold'), command=cancel_allocation,
+                            bg="red", fg='white', bd=5, width=6)
+    cancel_allocation_btn.place(x=585, y=350)
 
     def issuebookAddMorebtn():
         studentidEntry['state'] = 'normal'
@@ -1048,7 +1142,7 @@ def openTop():
         if editBookidval.get() == '':
             messagebox.showinfo("INFORMATION","Book ID cannot be Empty !!!" ,parent = dashwin )
         else:
-            query = "select title ,author, edition, price from storebook where bookid  = %s;"
+            query = "select title ,author, edition, price from storebook where bookid  = ?;"
             r = mycursor.execute(query,(editBookidval.get()))
             if r == True:
                 data = mycursor.fetchall()
@@ -1138,7 +1232,7 @@ def openTop():
         if editBooktitleval.get() == '' or editBookauthorval.get() == '' or editBookeditionval.get() == '' or editBookpriceval.get() == '':
             messagebox.showinfo("INFORMATION", "Any Field Cannot be Empty !!!", parent=dashwin)
         else:
-            query = 'UPDATE storebook SET title = %s , author = %s ,edition = %s , price = %s WHERE bookid = %s'
+            query = 'UPDATE storebook SET title = ? , author = ? ,edition = ? , price = ? WHERE bookid = ?'
             res = mycursor.execute(query , (editBooktitleval.get() ,editBookauthorval.get() ,editBookeditionval.get() ,editBookpriceval.get(),editBookidval.get()))
             if res == True:
                 messagebox.showinfo("INFORMATION", "Book SuccessFully Updated !!!", parent=dashwin)
@@ -1212,10 +1306,10 @@ def openTop():
         if ReturnBookidEntryval.get() == '':
             messagebox.showinfo("INFORMATION","Book ID cannot be Empty !!!" ,parent = dashwin )
         else:
-            query = "select * from storebook where bookid  = %s;"
+            query = "select * from storebook where bookid  = ?;"
             r = mycursor.execute(query,(ReturnBookidEntryval.get()))
             if r == True:
-                query = 'select to_date from bookissued_data where bookid =%s'
+                query = 'select to_date from bookissued_data where bookid =?'
                 chk = mycursor.execute(query, (ReturnBookidEntryval.get()))
                 if chk == True:
                     data = mycursor.fetchall()
@@ -1223,14 +1317,14 @@ def openTop():
                         to_date = i[0]
                     today_date = time.strftime("%y-%m-%d")
 
-                    query = "select datediff(%s,%s);"
+                    query = "select datediff(?,?);"
                     mycursor.execute(query, (str(today_date), str(to_date)))
                     dif = mycursor.fetchall()
                     for j in dif:
                         difren = j[0]
 
                     if (difren <= 0):
-                        query = "update storebook set issue_status=NULL,issued_to=NULL where bookid=%s"
+                        query = "update storebook set issue_status=NULL,issued_to=NULL where bookid=?"
                         r = mycursor.execute(query, (ReturnBookidEntryval.get()))
                         if r == True:
                             query = "delete from bookissued_data where bookid=%s"
@@ -1276,7 +1370,7 @@ def openTop():
                         finedatelabelval.place(x=120, y=120)
 
                         def FinePaidfun():
-                            query = "update storebook set issue_status=NULL,issued_to=NULL where bookid=%s"
+                            query = "update storebook set issue_status=NULL,issued_to=NULL where bookid=?"
                             r = mycursor.execute(query, (ReturnBookidEntryval.get()))
                             if r == True:
                                 query = "delete from bookissued_data where bookid=%s"
@@ -1343,9 +1437,9 @@ def openTop():
 
     def deleteBooksubmitbtnfun():
         if deleteBookidEntryval.get() == '':
-            messagebox.showinfo("INFORMATION","Book ID cannot be Empty !!!" ,parent = dashwin )
+            messagebox.showinfo("INFORMATION","Book data cannot be Empty !!!" ,parent = dashwin )
         else:
-            query = "select title ,author, edition, price from storebook where bookid  = %s;"
+            query = "select title ,author, edition, price from storebook where bookid  = ?;"
             r = mycursor.execute(query,(deleteBookidEntryval.get()))
             if r == True:
                 data = mycursor.fetchall()
@@ -1365,6 +1459,8 @@ def openTop():
 
             else:
                 messagebox.showinfo("INFORMATION", "No Book There With Such ID !!!", parent=dashwin)
+    
+    
 
     deleteBookbooksubmitbtn = Button(miniDeletebookframe, text="Submit", bg='blue2', fg='white', activebackground='red', bd=5,
                               activeforeground='white'
@@ -1443,7 +1539,7 @@ def openTop():
     def BookDeletebtnfun():
         delCon = messagebox.askyesno("CONFIRM","Do You Really Want To Delete These Book  !!!",parent = dashwin)
         if delCon == True :
-            query = 'DELETE FROM storebook  WHERE bookid = %s'
+            query = 'DELETE FROM storebook  WHERE bookid = ?'
             res = mycursor.execute(query, (deleteBookidEntryval.get()))
             if res == True:
                 messagebox.showinfo("INFORMATION", "Book SuccessFully Deleted !!!", parent=dashwin)
@@ -1472,12 +1568,13 @@ def openTop():
 
 
 
-    delete_booksbtn = Button(dashboardframe, text="Delete Book", font=("Arial", 12, "bold italic"), fg='white',
+    delete_booksbtn = Button(dashboardframe, text="Delete Rent", font=("Arial", 12, "bold italic"), fg='white',
                           bg="#B07138",
                           activebackground='red',
                           activeforeground='white', bd=10, width=150, height=40, image=deletebookimg, compound='left',
                           command=lambda: raise_frame(deleteBookframe))
     delete_booksbtn.place(x=30, y=225)
+
 
     def showAll():
         ## Search Book Frame
@@ -1497,7 +1594,7 @@ def openTop():
         SearchBookidLabelImg = Label(MinisearchbookFrame, image=Idimg, font=("Arial", 12, "bold"), bg='#AAC8C6')
         SearchBookidLabelImg.place(x=20, y=10)
 
-        SearchBookidLabel = Label(MinisearchbookFrame, text="Book ID :", font=("Arial", 12, "bold"), bg='#AAC8C6')
+        SearchBookidLabel = Label(MinisearchbookFrame, text="Bookissue ID :", font=("Arial", 12, "bold"), bg='#AAC8C6')
         SearchBookidLabel.place(x=60, y=15)
 
         SearchBookidEntryval = StringVar()
@@ -1511,10 +1608,10 @@ def openTop():
             if SearchBookidEntryval.get() == '':
                 messagebox.showinfo('INFORMATION', 'Search Book Id cannot Be Empty...', parent=dashwin)
             else:
-                query = 'SELECT bookid,title,author,edition,price FROM storebook WHERE bookid = %s ;'
+                query = 'SELECT bookid,title,author,edition,price FROM storebook WHERE bookid = ? ;'
                 r = mycursor.execute(query, SearchBookidEntryval.get())
                 if r == True:
-                    query = 'select bookid,title,author,edition,price from storebook WHERE bookid = %s ;'
+                    query = 'select bookid,title,author,edition,price from storebook WHERE bookid = ? ;'
                     mycursor.execute(query, SearchBookidEntryval.get())
                     data = mycursor.fetchall()
                     for i in data:
@@ -1667,12 +1764,12 @@ def openTop():
             messagebox.showinfo("Info", "All Fields are required...", parent=dashwin)
         else:
             if len(StudPhoneval.get()) == 10:
-                query = "Select roll_no ,student_name ,student_course ,phone ,college_name from student_data where roll_no=%s"
+                query = "Select roll_no ,student_name ,student_course ,phone ,college_name from student_data where roll_no=?"
                 r = mycursor.execute(query, (Studidval.get()))
                 if (r == True):
                     messagebox.showinfo("Info", "Student ID already exists!!!", parent=dashwin)
                 else:
-                    query = "insert into student_data(roll_no,student_name,student_course,phone,college_name) values(%s,%s,%s,%s,%s);"
+                    query = "insert into student_data(roll_no,student_name,student_course,phone,college_name) values(?,?,?,?,?);"
                     r = mycursor.execute(query, (
                     Studidval.get(), StudNameval.get(), StudCourseval.get(), StudPhoneval.get(), StudClgval.get()))
                     if (r == True):
@@ -1733,3 +1830,4 @@ def openTop():
     dashboardframe.tkraise()
 
 root.mainloop()
+
