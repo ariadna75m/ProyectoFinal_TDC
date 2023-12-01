@@ -81,3 +81,120 @@ El segundo autómata muestra la estructura de tarea sugerida para la cancelació
 ## Referencias
 Nos guiamos de este proyecto de github, hicimos los cambios necesarios para que funcione todo perfectamente, habia algunas cosas desactualizadas, https://github.com/Nitin-0205/Library-Management-System.
 
+## Uso del sistema
+
+- Crear base de dato libreria1 en sql server
+
+use libreria1
+
+CREATE TABLE admin_logindata (
+    id INT IDENTITY(1,1),
+    username VARCHAR(50),
+    password VARCHAR(255),  -- Se asume que estás almacenando las contraseñas de manera segura (hash + sal)
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(15)
+);
+
+-- Insertar datos en la tabla admin_logindata
+INSERT INTO admin_logindata (username, password, name, email, phone)
+VALUES 
+('usuario1', '123', 'Claudia Rejas', 'claudia.rejas@usil.pe', '123456789')
+
+
+CREATE TABLE storebook (
+    bookid INT PRIMARY KEY,
+    title VARCHAR(255),
+    author VARCHAR(255),
+    edition VARCHAR(50),
+    price DECIMAL(10, 2),
+    issue_status VARCHAR(50),   -- Puede ser 'Available' o 'Issued'
+    issued_to INT,       -- Roll_no del estudiante al que se le emitió el libro
+    CONSTRAINT chk_issue_status CHECK (issue_status IN ('Available', 'Issued')),
+	FOREIGN KEY (issued_to) REFERENCES student_data(roll_no)
+);
+
+CREATE TABLE student_data (
+    roll_no INT PRIMARY KEY,
+    student_name VARCHAR(255),
+    student_course VARCHAR(255),
+    phone VARCHAR(10),
+    college_name VARCHAR(255)
+);
+
+CREATE TABLE bookissued_data (
+    issue_id INT PRIMARY KEY,
+    roll_no INT,       -- Número de matrícula del estudiante
+    from_date DATE,             -- Fecha de emisión
+    to_date DATE,               -- Fecha de vencimiento
+    bookid INT,
+    FOREIGN KEY (roll_no) REFERENCES student_data(roll_no),
+    FOREIGN KEY (bookid) REFERENCES storebook(bookid)
+);
+
+-- Insertar datos en storebook utilizando valores existentes en roll_no
+INSERT INTO storebook (bookid, title, author, edition, price, issue_status, issued_to)
+VALUES
+    (2000, 'The Great Gatsby', 'F. Scott Fitzgerald', 'First Edition', 12.99, 'Available', 1000),
+    (2001, 'To Kill a Mockingbird', 'Harper Lee', '50th Anniversary Edition', 15.50, 'Issued', 1001),
+    (2002, '1984', 'George Orwell', 'Signet Classic Edition', 9.99, 'Available', 1002),
+    (2003, 'Brave New World', 'Aldous Huxley', 'Centennial Edition', 18.75, 'Issued', 1003),
+    (2004, 'The Catcher in the Rye', 'J.D. Salinger', 'Mass Market Paperback', 7.99, 'Available', 1004),
+    (2005, 'To Kill a Mockingbird', 'Harper Lee', 'Perennial Classics Edition', 14.50, 'Issued', 1005),
+    (2006, 'The Lord of the Rings', 'J.R.R. Tolkien', 'Deluxe Edition', 29.99, 'Available', 1006),
+    (2007, 'The Great Gatsby', 'F. Scott Fitzgerald', 'Penguin Modern Classics Edition', 12.75, 'Issued', 1007),
+    (2008, 'Animal Farm', 'George Orwell', 'Centennial Edition', 10.99, 'Available', 1008),
+    (2009, 'The Hobbit', 'J.R.R. Tolkien', 'Revised Edition', 21.50, 'Issued', 1009);
+
+
+INSERT INTO student_data (roll_no, student_name, student_course, phone, college_name)
+VALUES
+    (1000, 'Estudiante1', 'Ciencias de la Computación', '1234567890', 'Universidad XYZ'),
+    (1001, 'Estudiante2', 'Ingeniería Eléctrica', '9876543210', 'Instituto ABC'),
+    (1002, 'Estudiante3', 'Matemáticas Aplicadas', '5551112233', 'Colegio ZZZ'),
+    (1003, 'Estudiante4', 'Biología Molecular', '9998887766', 'Escuela PQR'),
+    (1004, 'Estudiante5', 'Psicología', '1112223344', 'Facultad LMN'),
+    (1005, 'Estudiante6', 'Ingeniería Civil', '6667778888', 'Universidad ABC'),
+    (1006, 'Estudiante7', 'Economía', '3334445555', 'Colegio DEF'),
+    (1007, 'Estudiante8', 'Ciencias Políticas', '7778889999', 'Instituto XYZ'),
+    (1008, 'Estudiante9', 'Química Orgánica', '2223334444', 'Facultad UVW'),
+    (1009, 'Estudiante10', 'Arquitectura', '8889990000', 'Colegio GHI');
+
+
+select * from storebook
+
+INSERT INTO bookissued_data (issue_id, roll_no, from_date, to_date, bookid)
+VALUES
+    (3000, 1000, '2023-01-01', '2023-02-01', 2000),
+    (3001, 1001, '2023-02-01', '2023-03-01', 2001),
+    (3002, 1002, '2023-03-01', '2023-04-01', 2002),
+    (3003, 1003, '2023-04-01', '2023-05-01', 2003),
+    (3004, 1004, '2023-05-01', '2023-06-01', 2004),
+    (3005, 1005, '2023-06-01', '2023-07-01', 2005),
+    (3006, 1006, '2023-07-01', '2023-08-01', 2006),
+    (3007, 1007, '2023-08-01', '2023-09-01', 2007),
+    (3008, 1008, '2023-09-01', '2023-10-01', 2008),
+    (3009, 1009, '2023-10-01', '2023-11-01', 2009);
+
+select * from bookissued_data
+use libreria1
+select * from storebook
+- Modificar la conexion a sql, usando el SQL Server Authentication
+
+  con = pyodbc.connect('DRIVER={SQL Server};'
+                                'SERVER=CLAUDIA\SQLS;'
+                                'DATABASE=libreria1;'
+                                'UID=sa;'
+                                'PWD=pollo')
+  a
+  con = pyodbc.connect('DRIVER={SQL Server};'
+                                'SERVER={nombre de su server};'
+                                'DATABASE=libreria1;'
+                                'UID={usuario de autentitacion};'
+                                'PWD={su contraseña}')
+  
+- Guardar proyecto en carpeta o cambiar el nombre de la carpeta a "Library_Management_Sys" para el correcto funcionamiento de las rutas de las imagenes y evitar conflictos con el sistema
+- Descargar pip
+    pip install tkinter
+    pip install Pillow
+    pip install pyodbc
